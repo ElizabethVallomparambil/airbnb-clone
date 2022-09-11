@@ -1,0 +1,1 @@
+CREATE ROLE airbnb_db_user LOGIN PASSWORD 'airbnb_db_password';
