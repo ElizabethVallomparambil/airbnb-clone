@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
+const auth = require('./auth')
 const app = express()
 const PORT = 8080;
 const HOST = '0.0.0.0';
@@ -9,14 +10,22 @@ const HOST = '0.0.0.0';
 // Set up Global configuration access
 dotenv.config();
 
-app.use(function(err, req, res, next) {
-    res.status(err.status || 500).json(response.error(err.status || 500));
-});
-
 app.set("view engine", "ejs")
+
+const userRouter = require('./src/routes/user_route')
+const bookingsRouter = require('./src/routes/booking_route')
+const listingsRouter = require('./src/routes/listing_route')
 
 app.use(require('body-parser').urlencoded({ extended: false }));
 app.use(express.json());
+
+app.use("/users", auth, userRouter)
+app.use("/bookings",auth, bookingsRouter)
+app.use("/listings",auth, listingsRouter)
+
+app.use(function(err, req, res, next) {
+    res.status(err.status || 500).json(response.error(err.status || 500));
+});
 
 app.listen(PORT, HOST);
 
@@ -53,4 +62,3 @@ app.get("/jwt/validateToken", (req, res) => {
         return res.status(401).send(error);  // Access Denied
     }
 });
-
